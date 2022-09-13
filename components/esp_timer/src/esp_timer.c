@@ -573,11 +573,12 @@ esp_err_t esp_timer_init(void)
     }
     return err;
 }
-
+#if !defined CONFIG_IDF_RTOS_RTTHREAD
 ESP_SYSTEM_INIT_FN(esp_timer_startup_init, CONFIG_ESP_TIMER_ISR_AFFINITY, 100)
 {
     return esp_timer_init();
 }
+#endif
 
 esp_err_t esp_timer_deinit(void)
 {

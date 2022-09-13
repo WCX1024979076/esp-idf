@@ -14,6 +14,8 @@
 #include "esp_private/hw_stack_guard.h"
 #endif
 
+#if !defined CONFIG_IDF_RTOS_RTTHREAD
+
 static StackType_t *esp_shared_stack_setup_context(StaticTask_t *tcb, void **sp_min, void **sp_max, StackType_t *stack, size_t stack_size)
 {
     //We need also to tweak current task stackpointer to avoid erroneous
@@ -40,6 +42,7 @@ static StackType_t *esp_shared_stack_setup_context(StaticTask_t *tcb, void **sp_
 #endif
     return ((StackType_t *)adjusted_top_of_stack);
 }
+#endif
 
 static void esp_shared_stack_restore_context(StaticTask_t *tcb, void *sp_min, void *sp_max) {
     tcb->pxDummy6 = sp_min;
@@ -56,6 +59,7 @@ static void esp_shared_stack_restore_context(StaticTask_t *tcb, void *sp_min, vo
 
 void esp_execute_shared_stack_function(SemaphoreHandle_t lock, void *stack, size_t stack_size, shared_stack_function function)
 {
+#if !defined CONFIG_IDF_RTOS_RTTHREAD
     assert(lock);
     assert(stack);
     assert(stack_size > 0 && stack_size >= CONFIG_ESP_MINIMAL_SHARED_STACK_SIZE);
@@ -91,4 +95,8 @@ void esp_execute_shared_stack_function(SemaphoreHandle_t lock, void *stack, size
     portEXIT_CRITICAL(&shared_stack_spinlock);
 
     xSemaphoreGive(lock);
+
+#else
+    function();
+#endif
 }
