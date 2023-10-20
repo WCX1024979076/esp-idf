@@ -15,9 +15,9 @@
 #include "esp_private/pm_impl.h"
 #include "esp_private/esp_clk.h"
 #include "esp_wpa.h"
-#ifndef CONFIG_IDF_RTOS_RTTHREAD
+#if !defined(CONFIG_IDF_RTOS_RTTHREAD)
 #include "esp_netif.h"
-#endif
+#endif /* CONFIG_IDF_RTOS_RTTHREAD */
 #include "esp_coexist_internal.h"
 #include "esp_phy_init.h"
 #include "esp_private/phy.h"
